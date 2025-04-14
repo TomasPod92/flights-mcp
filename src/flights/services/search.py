@@ -3,7 +3,15 @@
 import logging
 from typing import Dict
 import json
-from flights.server import FastMCP
+from flights.fastmcp import FastMCP
+
+class FastMCP:
+    def __init__(self, name: str):
+        self.name = name
+        self.logger = logging.getLogger(__name__)
+
+    def run(self, transport='stdio'):
+        self.logger.info(f"{self.name} running on {transport}")
 
 # Import all models through flight_search
 from ..models.flight_search import (
@@ -15,7 +23,7 @@ from ..models.time_specs import TimeSpec
 from ..api import DuffelClient
 
 # Set up logging
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 # Initialize FastMCP server and API client
 mcp = FastMCP("find-flights-mcp")
