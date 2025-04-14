@@ -10,3 +10,9 @@ class FastMCP:
 
     def run(self, transport='stdio'):
         self.logger.info(f"{self.name} running on {transport}")
+
+    def tool(self):
+        def decorator(func):
+            self.logger.info(f"Registering tool: {func.__name__}")
+            return func
+        return decorator
