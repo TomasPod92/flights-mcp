@@ -3,7 +3,7 @@
 import logging
 from typing import Dict
 import json
-from flights.server.fastmcp import FastMCP
+from flights.server import FastMCP
 
 # Import all models through flight_search
 from ..models.flight_search import (
