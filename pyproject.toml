@@ -7,7 +7,6 @@ dependencies = [
     "httpx",
     "python-dotenv",
     "pydantic",
-    "mcp",
 ]
 license = "MIT"
 
