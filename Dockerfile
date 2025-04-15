@@ -13,7 +13,10 @@ COPY pyproject.toml uv.lock /app/
 
 # Install ALL dependencies (incl. dev like uvicorn!)
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project --no-editable
+    uv venv && \
+    uv pip install --require-hashes -r uv.lock && \
+    uv pip install .
+
 
 # Copy source code and re-sync (if needed)
 ADD src /app/src
