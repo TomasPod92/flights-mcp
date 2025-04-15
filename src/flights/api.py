@@ -9,4 +9,5 @@ def root():
 
 @app.on_event("startup")
 def start_mcp():
-    mcp.run(transport="stdio")
+     thread = threading.Thread(target=mcp.run, kwargs={"transport": "stdio"}, daemon=True)
+    thread.start()
