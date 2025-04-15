@@ -33,4 +33,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV DUFFEL_API_KEY_LIVE=your_duffel_live_api_key_here
 
 # Start the MCP server
-CMD ["uvicorn", "flights.api:app", "--host", "0.0.0.0", "--port", "10000"]
+CMD ["python", "-m", "uvicorn", "flights.api:app", "--host", "0.0.0.0", "--port", "10000"]
