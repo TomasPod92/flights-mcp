@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y build-essential && \
     pip install --upgrade pip
 
 # Zkopíruj závislosti a projekt
-COPY pyproject.toml poetry.lock ./
-RUN pip install poetry && poetry config virtualenvs.create false && poetry install --no-root
+COPY pyproject.toml ./
+RUN pip install poetry && poetry config virtualenvs.create false && poetry install --no-root --no-lock
 
 COPY src/ ./src
 
