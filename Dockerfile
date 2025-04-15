@@ -25,11 +25,13 @@ FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
-# Copy preinstalled .venv from builder
 COPY --from=uv --chown=app:app /app/.venv /app/.venv
 
-# Activate venv
 ENV PATH="/app/.venv/bin:$PATH"
+
+# Install uvicorn & fastapi just to be sure
+RUN /app/.venv/bin/pip install --no-cache-dir uvicorn fastapi
+
 
 # Optional: create non-root user
 RUN adduser --disabled-password --gecos '' app && chown -R app /app
