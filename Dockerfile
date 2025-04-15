@@ -1,36 +1,39 @@
 # Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS uv
 
-# Install the project into /app
+# Set working directory
 WORKDIR /app
 
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
-
-# Copy from the cache instead of linking since it's a mounted volume
 ENV UV_LINK_MODE=copy
 
-# Install the project's dependencies using the lockfile and settings
+# Copy lockfile and pyproject
 COPY pyproject.toml uv.lock /app/
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-install-project --no-dev --no-editable
 
-# Then, add the rest of the project source code and install it
-# Installing separately from its dependencies allows optimal layer caching
+# Install ALL dependencies (incl. dev like uvicorn!)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-project --no-editable
+
+# Copy source code and re-sync (if needed)
 ADD src /app/src
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-editable
 
+# ---------- FINAL IMAGE ----------
 FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
-# COPY --from=uv /root/.local /root/.local
+# Copy preinstalled .venv from builder
 COPY --from=uv --chown=app:app /app/.venv /app/.venv
 
-# Place executables in the environment at the front of the path
+# Activate venv
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Define environment variable for Duffel API key
-ENV DUFFEL_API_KEY_LIVE=your_duffel_live_api_key_here
+# Optional: create non-root user
+RUN adduser --disabled-password --gecos '' app && chown -R app /app
+USER app
 
-# Start the MCP server
+# Start server
 CMD ["python", "-m", "uvicorn", "flights.api:app", "--host", "0.0.0.0", "--port", "10000"]
